@@ -1,0 +1,118 @@
+Flutter crash report.
+Please report a bug at https://github.com/flutter/flutter/issues.
+
+## command
+
+flutter run -d web-server --web-hostname 0.0.0.0 --web-port 8080
+
+## exception
+
+RPCError: ext.flutter.debugDumpFocusTree: (-32603) Unexpected DWDS error for callServiceExtension: Bad state: No clients available for service extension
+
+```
+#0      new _OutstandingRequest (package:vm_service/src/vm_service.dart:278:34)
+#1      VmService._call.<anonymous closure> (package:vm_service/src/vm_service.dart:1960:25)
+#2      VmService._call (package:vm_service/src/vm_service.dart:1972:8)
+#3      VmService.callServiceExtension (package:vm_service/src/vm_service.dart:1911:14)
+#4      FlutterVmService._checkedCallServiceExtension (package:flutter_tools/src/vmservice.dart:784:28)
+#5      FlutterVmService.invokeFlutterExtensionRpcRaw (package:flutter_tools/src/vmservice.dart:802:49)
+#6      FlutterVmService.flutterDebugDumpFocusTree (package:flutter_tools/src/vmservice.dart:597:50)
+#7      ResidentHandlers.debugDumpFocusTree (package:flutter_tools/src/resident_runner.dart:670:53)
+<asynchronous suspension>
+#8      TerminalHandler.processTerminalInput (package:flutter_tools/src/resident_runner.dart:1937:7)
+<asynchronous suspension>
+```
+
+## flutter doctor
+
+```
+[32m[✓][39m Flutter (Channel stable, 3.47.7, on
+    Ubuntu 24.04.5 LTS 6.8.0-1064-azure,
+    locale C.UTF-8) [149ms]
+    [32m•[39m Flutter version 3.47.7 on channel
+      stable at /home/codespace/flutter
+    [32m•[39m Upstream repository
+      https://github.com/flutter/flutter.g
+      it
+    [32m•[39m Framework revision abaf9c5237 (4
+      days ago), 2026-10-08 09:51:21 -0700
+    [32m•[39m Engine revision deb287481e
+    [32m•[39m Dart version 3.13.5
+    [32m•[39m DevTools version 2.60.0
+    [32m•[39m Feature flags: enable-web,
+      enable-linux-desktop,
+      enable-macos-desktop,
+      enable-windows-desktop,
+      enable-android, enable-ios,
+      cli-animations,
+      enable-native-assets,
+      enable-record-use,
+      enable-swift-package-manager,
+      omit-legacy-version-file,
+      enable-lldb-debugging,
+      enable-uiscene-migration
+
+[31m[✗][39m Android toolchain - develop for
+    Android devices [119ms]
+    [31m✗[39m Unable to locate Android SDK.
+      Install Android Studio from:
+      https://developer.android.com/studio
+      /index.html
+      On first launch it will assist you
+      in installing the Android SDK
+      components.
+      (or visit
+      https://flutter.dev/to/linux-android
+      -setup for detailed instructions).
+      If the Android SDK has been
+      installed to a custom location,
+      please use
+      `flutter config --android-sdk` to
+      update to that location.
+
+
+[31m[✗][39m Chrome - develop for the web (Cannot
+    find Chrome executable at
+    google-chrome) [107ms]
+    [33m![39m Cannot find Chrome. Try setting
+      CHROME_EXECUTABLE to a Chrome
+      executable.
+
+[31m[✗][39m Linux toolchain - develop for Linux
+    desktop [1,668ms]
+    [32m•[39m Ubuntu clang version 18.1.3
+      (1ubuntu1)
+    [32m•[39m cmake version 3.28.3
+    [31m✗[39m ninja is required for Linux
+      development.
+      It is likely available from your
+      distribution (e.g.: apt install
+      ninja-build), or can be downloaded
+      from
+      https://github.com/ninja-build/ninja
+      /releases
+    [32m•[39m pkg-config version 1.8.1
+    [31m✗[39m GTK 3.0 development libraries are
+      required for Linux development.
+      They are likely available from your
+      distribution (e.g.: apt install
+      libgtk-3-dev)
+    [33m![39m Unable to access driver information
+      using 'eglinfo'.
+      It is likely available from your
+      distribution (e.g.: apt install
+      mesa-utils)
+
+[32m[✓][39m Connected device (2 available) [23ms]
+    [32m•[39m Linux (desktop)  • linux      •
+      linux-x64      • Ubuntu 24.04.5 LTS
+      6.8.0-1064-azure
+    [32m•[39m Web Server (web) • web-server •
+      web-javascript • Flutter Tools
+
+[32m[✓][39m Network resources [842ms]
+    [32m•[39m All expected network resources are
+      available.
+
+[33m![39m Doctor found issues in 3 categories.
+```
