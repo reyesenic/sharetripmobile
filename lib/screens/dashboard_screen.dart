@@ -67,7 +67,8 @@ class _DashboardScreenState extends State<DashboardScreen>
               QuickActionsSection(
                 onFindRideTap: () => Navigator.pushNamed(context, '/find_ride'),
                 onMyRidesTap: () => Navigator.pushNamed(context, '/my_rides'),
-                onSavedPlacesTap: () => _showComingSoon('Saved Places'),
+                onSavedPlacesTap: () =>
+                    Navigator.pushNamed(context, '/saved_places'),
                 onRideHistoryTap: () => _showComingSoon('Ride History'),
               ),
               const SizedBox(height: 20),

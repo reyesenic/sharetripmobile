@@ -62,7 +62,7 @@ class RequestSentScreen extends StatelessWidget {
               Text(
                 'Your request has been sent to ${requestedRide.driverName}.',
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 14,
                   color: Colors.black54,
                 ),

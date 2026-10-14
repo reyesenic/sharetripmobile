@@ -10,6 +10,7 @@ import 'screens/rate_ride_screen.dart';
 import 'screens/register_step1_screen.dart';
 import 'screens/register_step2_screen.dart';
 import 'screens/ride_status_screen.dart';
+import 'screens/saved_places_screen.dart';
 import 'screens/vehicle_details_screen.dart';
 import 'screens/verify_otp_screen.dart';
 import 'screens/welcome_screen.dart';
@@ -26,6 +27,7 @@ class AppRoutes {
   static const String accountVerified = '/account_verified';
   static const String dashboard = '/dashboard';
   static const String myRides = '/my_rides';
+  static const String savedPlaces = '/saved_places';
   static const String findRide = '/find_ride';
   static const String findRideAlt =
       '/find-ride'; // Alias to prevent route error
@@ -112,6 +114,7 @@ class ShareTripApp extends StatelessWidget {
           );
         },
         AppRoutes.myRides: (context) => const MyRidesScreen(),
+        AppRoutes.savedPlaces: (context) => const SavedPlacesScreen(),
         AppRoutes.findRide: (context) => const FindRideScreen(),
         AppRoutes.findRideAlt: (context) =>
             const FindRideScreen(), // Supports both '/find_ride' and '/find-ride'

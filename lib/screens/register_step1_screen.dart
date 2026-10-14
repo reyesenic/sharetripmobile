@@ -43,8 +43,8 @@ class _RegisterStep1ScreenState extends State<RegisterStep1Screen> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pushReplacementNamed(context, '/login'),
         ),
-        title: Row(
-          children: const [
+        title: const Row(
+          children: [
             CircleAvatar(
               backgroundColor: Color(0xFF6C2BD9),
               radius: 16,
