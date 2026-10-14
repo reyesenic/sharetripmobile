@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../widgets/available_rides.dart';
+import '../widgets/recommended_routes_section.dart';
+import '../widgets/safety_section.dart';
 
 class DashboardScreen extends StatefulWidget {
   final String userName;
@@ -79,6 +81,53 @@ class _DashboardScreenState extends State<DashboardScreen>
                   arguments: ride.toRouteArguments(),
                 ),
               ),
+              const SizedBox(height: 20),
+              RecommendedRoutesSection(
+                routes: const [
+                  RecommendedRoute(
+                    from: 'Bitin',
+                    to: 'CMDI Main Campus',
+                    subtitle: 'Most popular · ~15 min',
+                    icon: Icons.alt_route_rounded,
+                    iconColor: Color(0xFF6D5BD0),
+                    backgroundColor: Color(0xFFF1EFFC),
+                  ),
+                  RecommendedRoute(
+                    from: 'Maitim',
+                    to: 'CMDI Main Campus',
+                    subtitle: 'Morning commute · ~20 min',
+                    icon: Icons.alt_route_rounded,
+                    iconColor: Color(0xFF10B981),
+                    backgroundColor: Color(0xFFE6F8F1),
+                  ),
+                  RecommendedRoute(
+                    from: 'CMDI Main Campus',
+                    to: 'Bitin',
+                    subtitle: 'Afternoon return · ~15 min',
+                    icon: Icons.alt_route_rounded,
+                    iconColor: Color(0xFFF59E0B),
+                    backgroundColor: Color(0xFFFFF4E0),
+                  ),
+                  RecommendedRoute(
+                    from: 'Tranca',
+                    to: 'CMDI Bay 2',
+                    subtitle: 'Direct route · ~18 min',
+                    icon: Icons.alt_route_rounded,
+                    iconColor: Color(0xFF8B5CF6),
+                    backgroundColor: Color(0xFFF3EFFE),
+                  ),
+                ],
+                onRouteTap: (route) => Navigator.pushNamed(
+                  context,
+                  '/find_ride',
+                  arguments: {'from': route.from, 'to': route.to},
+                ),
+              ),
+              const SizedBox(height: 20),
+              SafetySection(
+                onSafetyCenterTap: () => _showComingSoon('Safety Center'),
+              ),
+              const SizedBox(height: 12),
             ],
           ),
         ),
