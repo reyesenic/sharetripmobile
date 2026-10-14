@@ -1,26 +1,31 @@
 import 'package:flutter/material.dart';
 
+import 'widgets/available_rides.dart';
 import 'screens/account_verified_screen.dart';
 import 'screens/dashboard_screen.dart';
 import 'screens/find_ride_screen.dart';
 import 'screens/login_screen.dart';
+import 'screens/my_rides_screen.dart';
 import 'screens/rate_ride_screen.dart';
 import 'screens/register_step1_screen.dart';
 import 'screens/register_step2_screen.dart';
 import 'screens/ride_status_screen.dart';
 import 'screens/vehicle_details_screen.dart';
 import 'screens/verify_otp_screen.dart';
+import 'screens/welcome_screen.dart';
 
 // ============================================================
 // Centralized route names
 // ============================================================
 class AppRoutes {
+  static const String welcome = '/welcome';
   static const String login = '/login';
   static const String registerStep1 = '/register_step1';
   static const String registerStep2 = '/register_step2';
   static const String verifyOtp = '/verify_otp';
   static const String accountVerified = '/account_verified';
   static const String dashboard = '/dashboard';
+  static const String myRides = '/my_rides';
   static const String findRide = '/find_ride';
   static const String findRideAlt =
       '/find-ride'; // Alias to prevent route error
@@ -88,10 +93,11 @@ class ShareTripApp extends StatelessWidget {
       ),
 
       // ---------------- STARTING SCREEN ----------------
-      initialRoute: AppRoutes.login,
+      initialRoute: AppRoutes.welcome,
 
       // ---------------- ROUTES ----------------
       routes: {
+        AppRoutes.welcome: (context) => const WelcomeScreen(),
         AppRoutes.login: (context) => const LoginScreen(),
         AppRoutes.registerStep1: (context) => const RegisterStep1Screen(),
         AppRoutes.registerStep2: (context) => const RegisterStep2Screen(),
@@ -105,6 +111,7 @@ class ShareTripApp extends StatelessWidget {
                 : 'Student',
           );
         },
+        AppRoutes.myRides: (context) => const MyRidesScreen(),
         AppRoutes.findRide: (context) => const FindRideScreen(),
         AppRoutes.findRideAlt: (context) =>
             const FindRideScreen(), // Supports both '/find_ride' and '/find-ride'
@@ -112,7 +119,16 @@ class ShareTripApp extends StatelessWidget {
           final arguments = ModalRoute.of(context)?.settings.arguments;
           return VehicleDetailsScreen.fromArguments(arguments);
         },
-        AppRoutes.rideStatus: (context) => const RideStatusScreen(),
+        AppRoutes.rideStatus: (context) {
+          final arguments = ModalRoute.of(context)?.settings.arguments;
+          final ride = switch (arguments) {
+            Ride ride => ride,
+            Map<dynamic, dynamic> map =>
+              Ride.fromMap(Map<String, dynamic>.from(map)),
+            _ => sampleRides.first,
+          };
+          return RideStatusScreen(ride: ride);
+        },
         AppRoutes.rateRide: (context) => const RateRideScreen(),
       },
 

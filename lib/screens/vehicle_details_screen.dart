@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../widgets/available_rides.dart';
 import 'confirm_ride_screen.dart';
+import 'ride_status_screen.dart';
 
 /// ---------------------------------------------------------------
 /// vehicle_details_screen.dart
@@ -494,12 +495,16 @@ class VehicleDetailsScreen extends StatelessWidget {
                         onRequest!();
                         return;
                       }
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                            content:
-                                Text('Ride requested with ${ride.driverName}')),
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => RideStatusScreen(
+                            ride: ride,
+                            plateNumber: plateNumber,
+                            etaMinutes: etaMinutes,
+                          ),
+                        ),
                       );
-                      // TODO: save the request to Firebase / backend here.
                     }
                   : null,
               style: ElevatedButton.styleFrom(

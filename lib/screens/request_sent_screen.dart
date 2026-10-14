@@ -1,12 +1,24 @@
 import 'package:flutter/material.dart';
 
+import '../widgets/available_rides.dart';
 import 'ride_status_screen.dart';
 
 class RequestSentScreen extends StatelessWidget {
-  const RequestSentScreen({super.key});
+  final Ride? ride;
+  final String plateNumber;
+  final int etaMinutes;
+
+  const RequestSentScreen({
+    super.key,
+    this.ride,
+    this.plateNumber = 'LAG-7841',
+    this.etaMinutes = 4,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final requestedRide = ride ?? sampleRides.first;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FD),
       appBar: AppBar(
@@ -47,8 +59,8 @@ class RequestSentScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 8),
-              const Text(
-                'Your request has been sent to Ramon Dela Rosa.',
+              Text(
+                'Your request has been sent to ${requestedRide.driverName}.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 14,
@@ -63,7 +75,11 @@ class RequestSentScreen extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const RideStatusScreen(),
+                        builder: (context) => RideStatusScreen(
+                          ride: requestedRide,
+                          plateNumber: plateNumber,
+                          etaMinutes: etaMinutes,
+                        ),
                       ),
                     );
                   },
