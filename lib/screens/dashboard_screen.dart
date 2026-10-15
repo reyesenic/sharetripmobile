@@ -3,6 +3,7 @@ import '../widgets/available_rides.dart';
 import '../widgets/navigation_bar_card.dart';
 import '../widgets/recommended_routes_section.dart';
 import '../widgets/safety_section.dart';
+import 'safety_center_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   final String userName;
@@ -142,7 +143,12 @@ class _DashboardScreenState extends State<DashboardScreen>
               ),
               const SizedBox(height: 20),
               SafetySection(
-                onSafetyCenterTap: () => _showComingSoon('Safety Center'),
+                onSafetyCenterTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute<void>(
+                    builder: (_) => const SafetyCenterScreen(),
+                  ),
+                ),
               ),
               const SizedBox(height: 12),
             ],

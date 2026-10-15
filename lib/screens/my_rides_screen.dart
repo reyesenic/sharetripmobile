@@ -224,18 +224,48 @@ class _MyRidesScreenState extends State<MyRidesScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'My Rides',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.w800,
-              color: RideColors.dark,
-            ),
-          ),
-          const SizedBox(height: 4),
-          const Text(
-            'Manage your current and upcoming trips',
-            style: TextStyle(fontSize: 14, color: RideColors.grey),
+          Row(
+            children: [
+              IconButton(
+                onPressed: () => Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  '/dashboard',
+                  (_) => false,
+                ),
+                tooltip: 'Back',
+                style: IconButton.styleFrom(
+                  backgroundColor: const Color(0xFFF3F4F6),
+                  fixedSize: const Size(40, 40),
+                  padding: EdgeInsets.zero,
+                ),
+                icon: const Icon(
+                  Icons.arrow_back,
+                  size: 20,
+                  color: Color(0xFF374151),
+                ),
+              ),
+              const SizedBox(width: 12),
+              const Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'My Rides',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w800,
+                        color: RideColors.dark,
+                      ),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      'Manage your current and upcoming trips',
+                      style: TextStyle(fontSize: 14, color: RideColors.grey),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 16),
           Container(

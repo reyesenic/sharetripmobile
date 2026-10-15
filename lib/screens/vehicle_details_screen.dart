@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../widgets/available_rides.dart';
 import 'confirm_ride_screen.dart';
-import 'ride_status_screen.dart';
+import 'request_sent_screen.dart';
 
 /// ---------------------------------------------------------------
 /// vehicle_details_screen.dart
@@ -498,7 +498,7 @@ class VehicleDetailsScreen extends StatelessWidget {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => RideStatusScreen(
+                          builder: (_) => RequestSentScreen(
                             ride: ride,
                             plateNumber: plateNumber,
                             etaMinutes: etaMinutes,

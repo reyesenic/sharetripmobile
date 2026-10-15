@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'emergency_screen.dart';
+import 'report_problem_screen.dart';
+import 'ride_tracking_screen.dart';
 
 class SafetyCenterScreen extends StatelessWidget {
   const SafetyCenterScreen({super.key});
@@ -39,7 +42,13 @@ class SafetyCenterScreen extends StatelessWidget {
                     title: 'Verified Drivers',
                     description:
                         'Driver identity, student status, vehicle details, and plate information are reviewed before a ride is listed.',
-                    onTap: () {},
+                    onTap: () => ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                          'Driver verification details are available on each ride listing.',
+                        ),
+                      ),
+                    ),
                   ),
                   _SafetyToolCard(
                     icon: Icons.share_outlined,
@@ -48,7 +57,12 @@ class SafetyCenterScreen extends StatelessWidget {
                     title: 'Ride Tracking & Sharing',
                     description:
                         'Follow your trip progress and share your ride details with someone you trust.',
-                    onTap: () {},
+                    onTap: () => Navigator.push<void>(
+                      context,
+                      MaterialPageRoute<void>(
+                        builder: (_) => const RideTrackingScreen(),
+                      ),
+                    ),
                   ),
                   _SafetyToolCard(
                     icon: Icons.help_outline_rounded,
@@ -57,7 +71,12 @@ class SafetyCenterScreen extends StatelessWidget {
                     title: 'Emergency / SOS',
                     description:
                         'Access emergency assistance and your trip information when you need help.',
-                    onTap: () {},
+                    onTap: () => Navigator.push<void>(
+                      context,
+                      MaterialPageRoute<void>(
+                        builder: (_) => const EmergencyScreen(),
+                      ),
+                    ),
                   ),
                   _SafetyToolCard(
                     icon: Icons.flag_outlined,
@@ -66,7 +85,12 @@ class SafetyCenterScreen extends StatelessWidget {
                     title: 'Report a Driver or Ride',
                     description:
                         'Report unsafe behavior, vehicle concerns, incorrect ride details, or another safety issue.',
-                    onTap: () {},
+                    onTap: () => Navigator.push<void>(
+                      context,
+                      MaterialPageRoute<void>(
+                        builder: (_) => const ReportProblemScreen(),
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 4),
                   _buildGuidelines(),
@@ -139,8 +163,8 @@ class SafetyCenterScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: const [
+          const Row(
+            children: [
               Icon(Icons.verified_user_outlined, size: 18, color: _primary),
               SizedBox(width: 8),
               Text(
@@ -198,7 +222,7 @@ class SafetyCenterScreen extends StatelessWidget {
       borderRadius: BorderRadius.circular(18),
       boxShadow: [
         BoxShadow(
-          color: Colors.black.withOpacity(0.06),
+          color: Colors.black.withValues(alpha: 0.06),
           blurRadius: 10,
           offset: const Offset(0, 3),
         ),
@@ -287,4 +311,4 @@ class _SafetyToolCard extends StatelessWidget {
       ),
     );
   }
-} 
+}
