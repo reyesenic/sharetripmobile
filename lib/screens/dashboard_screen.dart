@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../widgets/available_rides.dart';
+import '../widgets/navigation_bar_card.dart';
 import '../widgets/recommended_routes_section.dart';
 import '../widgets/safety_section.dart';
 
@@ -33,12 +34,26 @@ class _DashboardScreenState extends State<DashboardScreen>
   }
 
   Future<void> _onNavTap(int index) async {
+    if (index == 0) {
+      setState(() => _currentNavIndex = 0);
+      return;
+    }
+
+    final String? route = switch (index) {
+      1 => '/find_ride',
+      2 => '/my_rides',
+      _ => null,
+    };
+
+    if (route == null) {
+      _showComingSoon(index == 3 ? 'Notifications' : 'Profile');
+      return;
+    }
+
     setState(() => _currentNavIndex = index);
-    if (index == 1) {
-      await Navigator.pushNamed(context, '/find_ride');
-      if (mounted) {
-        setState(() => _currentNavIndex = 0);
-      }
+    await Navigator.pushNamed(context, route);
+    if (mounted) {
+      setState(() => _currentNavIndex = 0);
     }
   }
 
@@ -69,7 +84,8 @@ class _DashboardScreenState extends State<DashboardScreen>
                 onMyRidesTap: () => Navigator.pushNamed(context, '/my_rides'),
                 onSavedPlacesTap: () =>
                     Navigator.pushNamed(context, '/saved_places'),
-                onRideHistoryTap: () => _showComingSoon('Ride History'),
+                onRideHistoryTap: () =>
+                    Navigator.pushNamed(context, '/ride_history'),
               ),
               const SizedBox(height: 20),
               AvailableRidesSection(
@@ -133,25 +149,9 @@ class _DashboardScreenState extends State<DashboardScreen>
           ),
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
+      bottomNavigationBar: AppBottomNav(
         currentIndex: _currentNavIndex,
         onTap: _onNavTap,
-        backgroundColor: const Color(0xFF4A148C),
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.white,
-        selectedIconTheme: const IconThemeData(size: 26),
-        unselectedIconTheme: const IconThemeData(size: 24),
-        selectedFontSize: 12,
-        unselectedFontSize: 12,
-        elevation: 8,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Find Ride'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.directions_car), label: 'Trips'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-        ],
       ),
     );
   }
