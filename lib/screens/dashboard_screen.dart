@@ -43,11 +43,12 @@ class _DashboardScreenState extends State<DashboardScreen>
     final String? route = switch (index) {
       1 => '/find_ride',
       2 => '/my_rides',
+      3 => '/notifications',
+      4 => '/profile',
       _ => null,
     };
 
     if (route == null) {
-      _showComingSoon(index == 3 ? 'Notifications' : 'Profile');
       return;
     }
 
@@ -56,12 +57,6 @@ class _DashboardScreenState extends State<DashboardScreen>
     if (mounted) {
       setState(() => _currentNavIndex = 0);
     }
-  }
-
-  void _showComingSoon(String feature) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('$feature is coming soon.')),
-    );
   }
 
   @override
@@ -77,7 +72,8 @@ class _DashboardScreenState extends State<DashboardScreen>
               DashboardHeader(
                 userName: widget.userName,
                 onSearchTap: () => Navigator.pushNamed(context, '/find_ride'),
-                onNotificationTap: () => _showComingSoon('Notifications'),
+                onNotificationTap: () =>
+                    Navigator.pushNamed(context, '/notifications'),
               ),
               const SizedBox(height: 24),
               QuickActionsSection(

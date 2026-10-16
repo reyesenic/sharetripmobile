@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:sharetrip_mobile/main.dart';
 import 'package:sharetrip_mobile/screens/safety_center_screen.dart';
+import 'package:sharetrip_mobile/screens/settings_screen.dart';
 import 'package:sharetrip_mobile/screens/vehicle_details_screen.dart';
 import 'package:sharetrip_mobile/widgets/available_rides.dart';
 import 'package:sharetrip_mobile/widgets/navigation_bar_card.dart';
@@ -75,6 +76,97 @@ void main() {
 
     expect(find.text('Manage your current and upcoming trips'), findsNothing);
     expect(find.text('Where are you going today?'), findsOneWidget);
+  });
+
+  testWidgets('dashboard header opens Notifications',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(const ShareTripApp());
+    Navigator.of(tester.element(find.text('ShareTrip')))
+        .pushNamed(AppRoutes.dashboard);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+
+    await tester.tap(find.byIcon(Icons.notifications_none_rounded).first);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.text('2 unread'), findsOneWidget);
+  });
+
+  testWidgets('dashboard navigation bar opens Notifications',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(const ShareTripApp());
+    Navigator.of(tester.element(find.text('ShareTrip')))
+        .pushNamed(AppRoutes.dashboard);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+
+    await tester.tap(
+      find.descendant(
+        of: find.byType(AppBottomNav),
+        matching: find.text('Notifications'),
+      ),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.text('2 unread'), findsOneWidget);
+  });
+
+  testWidgets('dashboard profile navigation opens Profile',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(const ShareTripApp());
+    Navigator.of(tester.element(find.text('ShareTrip')))
+        .pushNamed(AppRoutes.dashboard);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+
+    await tester.tap(
+      find.descendant(
+        of: find.byType(AppBottomNav),
+        matching: find.text('Profile'),
+      ),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+
+    expect(find.text('Alex Jimenez'), findsOneWidget);
+    expect(find.text('STUDENT INFORMATION'), findsOneWidget);
+  });
+
+  testWidgets('profile Edit Profile opens the edit profile screen',
+      (WidgetTester tester) async {
+    tester.view.physicalSize = const Size(800, 1200);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(const ShareTripApp());
+    Navigator.of(tester.element(find.text('ShareTrip')))
+        .pushNamed(AppRoutes.profile);
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Edit Profile'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Update your personal information'), findsOneWidget);
+  });
+
+  testWidgets('profile Settings opens the settings screen',
+      (WidgetTester tester) async {
+    tester.view.physicalSize = const Size(800, 1200);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await tester.pumpWidget(const ShareTripApp());
+    Navigator.of(tester.element(find.text('ShareTrip')))
+        .pushNamed(AppRoutes.profile);
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Settings'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(SettingsScreen), findsOneWidget);
+    expect(find.text('ACCOUNT SETTINGS'), findsOneWidget);
   });
 
   testWidgets('Ride History quick action opens the ride history screen',

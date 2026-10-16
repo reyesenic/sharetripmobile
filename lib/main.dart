@@ -1,17 +1,24 @@
 import 'package:flutter/material.dart';
+import 'themes/app_theme.dart';
+import 'themes/theme_controller.dart';
 
 import 'widgets/available_rides.dart';
 import 'screens/account_verified_screen.dart';
 import 'screens/dashboard_screen.dart';
+import 'screens/edit_profile_screen.dart';
 import 'screens/find_ride_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/my_rides_screen.dart';
+import 'screens/notification_screen.dart';
+import 'screens/profile_screen.dart';
 import 'screens/rate_ride_screen.dart';
 import 'screens/register_step1_screen.dart';
 import 'screens/register_step2_screen.dart';
 import 'screens/ride_history_screen.dart';
 import 'screens/ride_status_screen.dart';
+import 'screens/safety_center_screen.dart';
 import 'screens/saved_places_screen.dart';
+import 'screens/settings_screen.dart';
 import 'screens/vehicle_details_screen.dart';
 import 'screens/verify_otp_screen.dart';
 import 'screens/welcome_screen.dart';
@@ -30,6 +37,10 @@ class AppRoutes {
   static const String myRides = '/my_rides';
   static const String rideHistory = '/ride_history';
   static const String savedPlaces = '/saved_places';
+  static const String notifications = '/notifications';
+  static const String profile = '/profile';
+  static const String editProfile = '/edit_profile';
+  static const String settings = '/settings';
   static const String findRide = '/find_ride';
   static const String findRideAlt =
       '/find-ride'; // Alias to prevent route error
@@ -38,7 +49,9 @@ class AppRoutes {
   static const String rateRide = '/rate_ride';
 }
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await ThemeController.instance.load();
   runApp(const ShareTripApp());
 }
 
@@ -47,103 +60,131 @@ class ShareTripApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'CMDI ShareTrip',
-      debugShowCheckedModeBanner: false,
+    return ListenableBuilder(
+      listenable: ThemeController.instance,
+      builder: (context, _) => MaterialApp(
+        title: 'CMDI ShareTrip',
+        debugShowCheckedModeBanner: false,
 
-      // ---------------- THEME ----------------
-      theme: ThemeData(
-        useMaterial3: true,
-        scaffoldBackgroundColor: const Color(0xFFF8FAFC),
-        primaryColor: const Color(0xFF6C2BD9),
-        fontFamily: 'Roboto',
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF6C2BD9),
-          primary: const Color(0xFF6C2BD9),
-          brightness: Brightness.light,
-        ),
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Color(0xFF6C2BD9),
-          foregroundColor: Colors.white,
-          elevation: 0,
-          centerTitle: false,
-        ),
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF6C2BD9),
+        // ---------------- THEME ----------------
+        theme: ThemeData(
+          useMaterial3: true,
+          scaffoldBackgroundColor: const Color(0xFFF8FAFC),
+          primaryColor: const Color(0xFF6C2BD9),
+          fontFamily: 'Roboto',
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color(0xFF6C2BD9),
+            primary: const Color(0xFF6C2BD9),
+            brightness: Brightness.light,
+          ),
+          appBarTheme: const AppBarTheme(
+            backgroundColor: Color(0xFF6C2BD9),
             foregroundColor: Colors.white,
             elevation: 0,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+            centerTitle: false,
+          ),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF6C2BD9),
+              foregroundColor: Colors.white,
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
           ),
+          inputDecorationTheme: InputDecorationTheme(
+            filled: true,
+            fillColor: Colors.white,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: Colors.grey.shade200),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: Colors.grey.shade200),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide:
+                  const BorderSide(color: Color(0xFF6C2BD9), width: 1.5),
+            ),
+          ),
+          extensions: const [ShareTripColors.light],
         ),
-        inputDecorationTheme: InputDecorationTheme(
-          filled: true,
-          fillColor: Colors.white,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: Colors.grey.shade200),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: Colors.grey.shade200),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: Color(0xFF6C2BD9), width: 1.5),
-          ),
-        ),
-      ),
+        darkTheme: AppTheme.dark,
+        themeMode: ThemeController.instance.mode,
 
-      // ---------------- STARTING SCREEN ----------------
-      initialRoute: AppRoutes.welcome,
+        // ---------------- STARTING SCREEN ----------------
+        initialRoute: AppRoutes.welcome,
 
-      // ---------------- ROUTES ----------------
-      routes: {
-        AppRoutes.welcome: (context) => const WelcomeScreen(),
-        AppRoutes.login: (context) => const LoginScreen(),
-        AppRoutes.registerStep1: (context) => const RegisterStep1Screen(),
-        AppRoutes.registerStep2: (context) => const RegisterStep2Screen(),
-        AppRoutes.verifyOtp: (context) => const VerifyOtpScreen(),
-        AppRoutes.accountVerified: (context) => const AccountVerifiedScreen(),
-        AppRoutes.dashboard: (context) {
-          final arguments = ModalRoute.of(context)?.settings.arguments;
-          return DashboardScreen(
-            userName: arguments is String && arguments.trim().isNotEmpty
-                ? arguments
-                : 'Student',
+        // ---------------- ROUTES ----------------
+        routes: {
+          AppRoutes.welcome: (context) => const WelcomeScreen(),
+          AppRoutes.login: (context) => const LoginScreen(),
+          AppRoutes.registerStep1: (context) => const RegisterStep1Screen(),
+          AppRoutes.registerStep2: (context) => const RegisterStep2Screen(),
+          AppRoutes.verifyOtp: (context) => const VerifyOtpScreen(),
+          AppRoutes.accountVerified: (context) => const AccountVerifiedScreen(),
+          AppRoutes.dashboard: (context) {
+            final arguments = ModalRoute.of(context)?.settings.arguments;
+            return DashboardScreen(
+              userName: arguments is String && arguments.trim().isNotEmpty
+                  ? arguments
+                  : 'Student',
+            );
+          },
+          AppRoutes.myRides: (context) => const MyRidesScreen(),
+          AppRoutes.rideHistory: (context) => const RideHistoryScreen(),
+          AppRoutes.savedPlaces: (context) => const SavedPlacesScreen(),
+          AppRoutes.notifications: (context) => const NotificationsScreen(),
+          AppRoutes.editProfile: (context) => const EditProfileScreen(),
+          AppRoutes.settings: (context) => const SettingsScreen(),
+          AppRoutes.profile: (context) => ProfileScreen(
+                onSavedPlaces: () =>
+                    Navigator.pushNamed(context, AppRoutes.savedPlaces),
+                onRideHistory: () =>
+                    Navigator.pushNamed(context, AppRoutes.rideHistory),
+                onEditProfile: () =>
+                    Navigator.pushNamed(context, AppRoutes.editProfile),
+                onNotifications: () =>
+                    Navigator.pushNamed(context, AppRoutes.notifications),
+                onPrivacySafety: () => Navigator.push(
+                  context,
+                  MaterialPageRoute<void>(
+                    builder: (_) => const SafetyCenterScreen(),
+                  ),
+                ),
+                onSettings: () =>
+                    Navigator.pushNamed(context, AppRoutes.settings),
+              ),
+          AppRoutes.findRide: (context) => const FindRideScreen(),
+          AppRoutes.findRideAlt: (context) =>
+              const FindRideScreen(), // Supports both '/find_ride' and '/find-ride'
+          AppRoutes.vehicleDetails: (context) {
+            final arguments = ModalRoute.of(context)?.settings.arguments;
+            return VehicleDetailsScreen.fromArguments(arguments);
+          },
+          AppRoutes.rideStatus: (context) {
+            final arguments = ModalRoute.of(context)?.settings.arguments;
+            final ride = switch (arguments) {
+              Ride ride => ride,
+              Map<dynamic, dynamic> map =>
+                Ride.fromMap(Map<String, dynamic>.from(map)),
+              _ => sampleRides.first,
+            };
+            return RideStatusScreen(ride: ride);
+          },
+          AppRoutes.rateRide: (context) => const RateRideScreen(),
+        },
+
+        // ---------------- FALLBACK FOR UNKNOWN ROUTES ----------------
+        onUnknownRoute: (settings) {
+          return MaterialPageRoute(
+            builder: (context) => _UnknownRouteScreen(routeName: settings.name),
           );
         },
-        AppRoutes.myRides: (context) => const MyRidesScreen(),
-        AppRoutes.rideHistory: (context) => const RideHistoryScreen(),
-        AppRoutes.savedPlaces: (context) => const SavedPlacesScreen(),
-        AppRoutes.findRide: (context) => const FindRideScreen(),
-        AppRoutes.findRideAlt: (context) =>
-            const FindRideScreen(), // Supports both '/find_ride' and '/find-ride'
-        AppRoutes.vehicleDetails: (context) {
-          final arguments = ModalRoute.of(context)?.settings.arguments;
-          return VehicleDetailsScreen.fromArguments(arguments);
-        },
-        AppRoutes.rideStatus: (context) {
-          final arguments = ModalRoute.of(context)?.settings.arguments;
-          final ride = switch (arguments) {
-            Ride ride => ride,
-            Map<dynamic, dynamic> map =>
-              Ride.fromMap(Map<String, dynamic>.from(map)),
-            _ => sampleRides.first,
-          };
-          return RideStatusScreen(ride: ride);
-        },
-        AppRoutes.rateRide: (context) => const RateRideScreen(),
-      },
-
-      // ---------------- FALLBACK FOR UNKNOWN ROUTES ----------------
-      onUnknownRoute: (settings) {
-        return MaterialPageRoute(
-          builder: (context) => _UnknownRouteScreen(routeName: settings.name),
-        );
-      },
+      ),
     );
   }
 }
