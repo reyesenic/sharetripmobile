@@ -1,10 +1,15 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:sharetrip_mobile/main.dart';
+import 'package:sharetrip_mobile/screens/notification_models.dart';
+import 'package:sharetrip_mobile/screens/notification_screen.dart';
 import 'package:sharetrip_mobile/screens/safety_center_screen.dart';
 import 'package:sharetrip_mobile/screens/settings_screen.dart';
 import 'package:sharetrip_mobile/screens/vehicle_details_screen.dart';
+import 'package:sharetrip_mobile/themes/app_theme.dart';
 import 'package:sharetrip_mobile/widgets/available_rides.dart';
 import 'package:sharetrip_mobile/widgets/navigation_bar_card.dart';
 
@@ -89,7 +94,7 @@ void main() {
     await tester.tap(find.byIcon(Icons.notifications_none_rounded).first);
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
-    expect(find.text('2 unread'), findsOneWidget);
+    expect(find.text('12 unread'), findsOneWidget);
   });
 
   testWidgets('dashboard navigation bar opens Notifications',
@@ -108,7 +113,58 @@ void main() {
     );
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
-    expect(find.text('2 unread'), findsOneWidget);
+    expect(find.text('12 unread'), findsOneWidget);
+  });
+
+  testWidgets('notifications show skeleton while loading and build lazily',
+      (WidgetTester tester) async {
+    final loadCompleter = Completer<List<AppNotification>>();
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: AppTheme.light,
+        home: NotificationsScreen(
+          loadNotifications: () => loadCompleter.future,
+        ),
+      ),
+    );
+
+    expect(find.text('Loading notifications...'), findsOneWidget);
+    expect(find.byType(ListView), findsOneWidget);
+
+    loadCompleter.complete(sampleNotifications());
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+
+    expect(find.text('Ride Request Accepted'), findsOneWidget);
+    expect(find.text('Lost Item Case Closed'), findsNothing);
+
+    await tester.scrollUntilVisible(
+      find.text('Lost Item Case Closed'),
+      400,
+      scrollable: find.byType(Scrollable).last,
+    );
+    expect(find.text('Lost Item Case Closed'), findsOneWidget);
+  });
+
+  testWidgets('notification cards open the shared details screen',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: AppTheme.light,
+        home: const NotificationsScreen(),
+      ),
+    );
+
+    await tester.tap(find.text('Ride Request Accepted'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Notification Details'), findsOneWidget);
+    expect(
+      find.text(
+        'Your seat is reserved for the 6:30 AM departure from Bitin Junction.',
+      ),
+      findsOneWidget,
+    );
   });
 
   testWidgets('dashboard profile navigation opens Profile',
