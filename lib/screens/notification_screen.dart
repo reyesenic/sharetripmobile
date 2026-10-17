@@ -22,13 +22,19 @@ class NotificationsScreen extends StatefulWidget {
 }
 
 class _NotificationsScreenState extends State<NotificationsScreen> {
+  static const _pageSize = 10;
+  static const _skeletonCount = 3;
+
   late List<AppNotification> _items = List.of(
     widget.notifications ??
         (widget.loadNotifications == null ? sampleNotifications() : const []),
   );
   bool _isLoading = false;
+  bool _isLoadingMore = false;
   Object? _loadError;
   int _loadGeneration = 0;
+  int _visibleLimit = _pageSize;
+  final ScrollController _listController = ScrollController();
 
   NotificationCategory? _filter;
 
@@ -53,12 +59,24 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           .where((notification) => notification.category == _filter)
           .toList(growable: false);
 
+  int get _visibleItemCount =>
+      _visible.length.clamp(0, _visibleLimit).toInt();
+
   @override
   void initState() {
     super.initState();
+    _listController.addListener(_onListScroll);
     if (widget.loadNotifications != null) {
       unawaited(_loadNotifications());
     }
+  }
+
+  @override
+  void dispose() {
+    _listController
+      ..removeListener(_onListScroll)
+      ..dispose();
+    super.dispose();
   }
 
   @override
@@ -72,6 +90,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         setState(() {
           _items = List.of(widget.notifications ?? sampleNotifications());
           _isLoading = false;
+          _isLoadingMore = false;
+          _visibleLimit = _pageSize;
           _loadError = null;
         });
       }
@@ -79,6 +99,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
         oldWidget.notifications != widget.notifications) {
       setState(() {
         _items = List.of(widget.notifications ?? sampleNotifications());
+        _visibleLimit = _pageSize;
       });
     }
   }
@@ -99,6 +120,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       setState(() {
         _items = List.of(notifications);
         _isLoading = false;
+        _visibleLimit = _pageSize;
       });
     } catch (error) {
       debugPrint('Unable to load notifications: $error');
@@ -111,7 +133,11 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   }
 
   void _select(int index) {
-    setState(() => _filter = _options[index]);
+    setState(() {
+      _filter = _options[index];
+      _visibleLimit = _pageSize;
+      _isLoadingMore = false;
+    });
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final chipContext = _chipKeys[index].currentContext;
       if (chipContext != null) {
@@ -122,6 +148,28 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
           curve: Curves.easeOut,
         );
       }
+    });
+  }
+
+  void _onListScroll() {
+    if (!_listController.hasClients || _isLoading || _isLoadingMore) return;
+    if (_listController.position.extentAfter <= 240 &&
+        _visibleItemCount < _visible.length) {
+      unawaited(_loadNextBatch());
+    }
+  }
+
+  Future<void> _loadNextBatch() async {
+    if (_isLoadingMore || _visibleItemCount >= _visible.length) return;
+    setState(() => _isLoadingMore = true);
+
+    await Future<void>.delayed(const Duration(milliseconds: 350));
+    if (!mounted) return;
+
+    setState(() {
+      _visibleLimit =
+          (_visibleLimit + _pageSize).clamp(0, _visible.length).toInt();
+      _isLoadingMore = false;
     });
   }
 
@@ -327,9 +375,14 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                             ),
                           )
                         : ListView.builder(
+                            controller: _listController,
                             padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-                            itemCount: visible.length,
+                            itemCount: _visibleItemCount +
+                                (_isLoadingMore ? _skeletonCount : 0),
                             itemBuilder: (_, index) {
+                              if (index >= _visibleItemCount) {
+                                return _NotificationSkeletonCard(index: index);
+                              }
                               final notification = visible[index];
                               return _NotificationCard(
                                 key: ValueKey(notification.id),
@@ -642,6 +695,78 @@ class _NotificationSkeletonListState extends State<_NotificationSkeletonList>
                 ),
               ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _NotificationSkeletonCard extends StatelessWidget {
+  const _NotificationSkeletonCard({required this.index});
+
+  final int index;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.st;
+    return Semantics(
+      label: 'Loading more notifications',
+      child: Opacity(
+        opacity: 0.65 + (index.isEven ? 0.2 : 0),
+        child: Container(
+          margin: const EdgeInsets.only(bottom: 12),
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: colors.card,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: colors.divider),
+          ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _SkeletonBlock(
+                width: 46,
+                height: 46,
+                color: colors.iconButtonBg,
+                radius: 14,
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _SkeletonBlock(
+                      width: index.isEven ? 180 : 140,
+                      height: 16,
+                      color: colors.iconButtonBg,
+                      radius: 8,
+                    ),
+                    const SizedBox(height: 10),
+                    _SkeletonBlock(
+                      width: double.infinity,
+                      height: 12,
+                      color: colors.divider,
+                      radius: 6,
+                    ),
+                    const SizedBox(height: 6),
+                    _SkeletonBlock(
+                      width: 125,
+                      height: 12,
+                      color: colors.divider,
+                      radius: 6,
+                    ),
+                    const SizedBox(height: 10),
+                    _SkeletonBlock(
+                      width: 64,
+                      height: 10,
+                      color: colors.divider,
+                      radius: 5,
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
       ),

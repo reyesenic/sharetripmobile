@@ -136,6 +136,7 @@ void main() {
     await tester.pump(const Duration(milliseconds: 100));
 
     expect(find.text('Ride Request Accepted'), findsOneWidget);
+    expect(find.text('Ride Request Declined'), findsNothing);
     expect(find.text('Lost Item Case Closed'), findsNothing);
 
     await tester.scrollUntilVisible(
@@ -144,6 +145,32 @@ void main() {
       scrollable: find.byType(Scrollable).last,
     );
     expect(find.text('Lost Item Case Closed'), findsOneWidget);
+  });
+
+  testWidgets('notifications load the next ten with skeleton rows',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: AppTheme.light,
+        home: const NotificationsScreen(),
+      ),
+    );
+
+    expect(find.text('Ride Request Accepted'), findsOneWidget);
+    expect(find.text('Ride Request Declined'), findsNothing);
+
+    await tester.drag(find.byType(ListView).last, const Offset(0, -3000));
+    await tester.pump();
+
+    expect(find.bySemanticsLabel('Loading more notifications'), findsOneWidget);
+
+    await tester.pump(const Duration(milliseconds: 400));
+    await tester.scrollUntilVisible(
+      find.text('Ride Request Declined'),
+      400,
+      scrollable: find.byType(Scrollable).last,
+    );
+    expect(find.text('Ride Request Declined'), findsOneWidget);
   });
 
   testWidgets('notification cards open the shared details screen',
