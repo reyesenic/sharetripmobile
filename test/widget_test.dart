@@ -213,6 +213,7 @@ void main() {
 
     expect(find.text('Alex Jimenez'), findsOneWidget);
     expect(find.text('STUDENT INFORMATION'), findsOneWidget);
+    expect(find.byTooltip('Back'), findsOneWidget);
   });
 
   testWidgets('profile Edit Profile opens the edit profile screen',

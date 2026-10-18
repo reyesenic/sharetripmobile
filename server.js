@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const { legalDocuments, supportFaqs } = require('./backend/content_data');
 
 const app = express();
 
@@ -72,6 +73,26 @@ app.get('/api/app/config', (req, res) => {
 
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'ok', uptime: process.uptime() });
+});
+
+// ==========================================
+// SUPPORT & LEGAL CONTENT API
+// ==========================================
+app.get('/api/legal/:documentId', (req, res) => {
+  if (!Object.prototype.hasOwnProperty.call(legalDocuments, req.params.documentId)) {
+    return res.status(404).json({ success: false, error: 'Legal document not found.' });
+  }
+
+  const document = legalDocuments[req.params.documentId];
+  return res.status(200).json({ success: true, document });
+});
+
+app.get('/api/support/faqs', (req, res) => {
+  res.status(200).json({
+    success: true,
+    supportEmail: 'support@sharetrip.edu.ph',
+    faqs: supportFaqs,
+  });
 });
 
 // ==========================================

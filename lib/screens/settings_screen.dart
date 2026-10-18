@@ -5,7 +5,9 @@ import '../widgets/settings_widget.dart';
 import 'change_password_screen.dart';
 import 'edit_profile_screen.dart';
 import 'linked_accounts_screen.dart';
+import 'privacy_policy_screen.dart';
 import 'privacy_safety_screen.dart';
+import 'terms_conditions_screen.dart';
 
 /// Panels 1 & 2 - Settings (scrolls).
 class SettingsScreen extends StatefulWidget {
@@ -143,11 +145,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
               NavTile(
                 title: 'Terms & Conditions',
-                onTap: () => comingSoon(context, 'Terms & Conditions'),
+                onTap: () => _open(const TermsConditionsScreen()),
               ),
               NavTile(
                 title: 'Privacy Policy',
-                onTap: () => comingSoon(context, 'Privacy Policy'),
+                onTap: () => _open(const PrivacyPolicyScreen()),
               ),
             ],
           ),

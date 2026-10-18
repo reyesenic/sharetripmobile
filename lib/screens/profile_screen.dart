@@ -171,99 +171,119 @@ class ProfileScreen extends StatelessWidget {
         20,
         22,
       ),
-      child: Column(
+      child: Stack(
         children: [
-          // Avatar with edit badge
-          Stack(
-            clipBehavior: Clip.none,
+          Column(
             children: [
-              CircleAvatar(
-                radius: 44,
-                backgroundColor: Colors.white,
-                child: Text(
-                  initials,
-                  style: const TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.w800,
-                    color: _primary,
+              // Avatar with edit badge
+              Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  CircleAvatar(
+                    radius: 44,
+                    backgroundColor: Colors.white,
+                    child: Text(
+                      initials,
+                      style: const TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.w800,
+                        color: _primary,
+                      ),
+                    ),
                   ),
+                  Positioned(
+                    right: -2,
+                    bottom: 2,
+                    child: InkWell(
+                      onTap: onEditAvatar,
+                      customBorder: const CircleBorder(),
+                      child: Container(
+                        width: 26,
+                        height: 26,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: _primary, width: 2),
+                        ),
+                        child: const Icon(Icons.edit_outlined,
+                            size: 13, color: _primary),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Text(
+                name,
+                style: const TextStyle(
+                  fontSize: 19,
+                  fontWeight: FontWeight.w800,
+                  color: Colors.white,
                 ),
               ),
-              Positioned(
-                right: -2,
-                bottom: 2,
-                child: InkWell(
-                  onTap: onEditAvatar,
-                  customBorder: const CircleBorder(),
-                  child: Container(
-                    width: 26,
-                    height: 26,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: _primary, width: 2),
-                    ),
-                    child: const Icon(Icons.edit_outlined,
+              const SizedBox(height: 4),
+              Text(
+                '$courseShort · $yearLevel',
+                style: const TextStyle(fontSize: 13, color: Color(0xFFD6D3FF)),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                email,
+                style:
+                    const TextStyle(fontSize: 11.5, color: Color(0xFFC4C0FF)),
+              ),
+              const SizedBox(height: 10),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.92),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.verified_user_outlined,
                         size: 13, color: _primary),
-                  ),
+                    SizedBox(width: 5),
+                    Text(
+                      'Verified Student',
+                      style: TextStyle(
+                        fontSize: 11.5,
+                        fontWeight: FontWeight.w700,
+                        color: _primary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
+              IntrinsicHeight(
+                child: Row(
+                  children: [
+                    Expanded(child: _Stat(value: '$rides', label: 'Rides')),
+                    _statDivider(),
+                    Expanded(child: _Stat(value: '₱$spent', label: 'Spent')),
+                    _statDivider(),
+                    Expanded(
+                        child: _Stat(
+                            value: rating.toStringAsFixed(1), label: 'Rating')),
+                  ],
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
-          Text(
-            name,
-            style: const TextStyle(
-              fontSize: 19,
-              fontWeight: FontWeight.w800,
-              color: Colors.white,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            '$courseShort · $yearLevel',
-            style: const TextStyle(fontSize: 13, color: Color(0xFFD6D3FF)),
-          ),
-          const SizedBox(height: 2),
-          Text(
-            email,
-            style: const TextStyle(fontSize: 11.5, color: Color(0xFFC4C0FF)),
-          ),
-          const SizedBox(height: 10),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.92),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: const Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.verified_user_outlined, size: 13, color: _primary),
-                SizedBox(width: 5),
-                Text(
-                  'Verified Student',
-                  style: TextStyle(
-                    fontSize: 11.5,
-                    fontWeight: FontWeight.w700,
-                    color: _primary,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 20),
-          IntrinsicHeight(
-            child: Row(
-              children: [
-                Expanded(child: _Stat(value: '$rides', label: 'Rides')),
-                _statDivider(),
-                Expanded(child: _Stat(value: '₱$spent', label: 'Spent')),
-                _statDivider(),
-                Expanded(
-                    child: _Stat(
-                        value: rating.toStringAsFixed(1), label: 'Rating')),
-              ],
+          Positioned(
+            top: 0,
+            left: 0,
+            child: IconButton(
+              tooltip: 'Back',
+              onPressed: () => Navigator.maybePop(context),
+              style: IconButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.white.withValues(alpha: 0.16),
+              ),
+              icon: const Icon(Icons.arrow_back),
             ),
           ),
         ],
@@ -439,8 +459,7 @@ class _MenuTile extends StatelessWidget {
               ),
               const SizedBox(width: 10),
             ],
-            const Icon(Icons.chevron_right,
-                size: 18, color: Color(0xFFD1D5DB)),
+            const Icon(Icons.chevron_right, size: 18, color: Color(0xFFD1D5DB)),
           ],
         ),
       ),
